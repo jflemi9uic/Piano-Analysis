@@ -42,13 +42,14 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # there needs to be 6 rows
 first, second, third = st.beta_columns([1, 10, 1])
-thirteen = st.beta_columns(1)
+one, two = st.beta_columns([5, 4])
 fourth, fifth, sixth = st.beta_columns([1, 10, 1])
 three, four = st.beta_columns([5, 4])
 five, six = st.beta_columns([5, 4])
 seven, eight = st.beta_columns([5, 4])
 nine, ten = st.beta_columns([5, 4])
 eleven, twelve = st.beta_columns([5, 4])
+thirteen, fourteen = st.beta_columns([5,4])
 
 # Grabbing sound file data
 def get_user_data() -> bool:
@@ -67,7 +68,7 @@ def get_user_data() -> bool:
         file = uploaded_file.name
         key = file.replace('.wav', '')
         
-        FeatureExtractor(uploaded_file, three, five, thirteen)
+        FeatureExtractor(uploaded_file, key, three, five, one, two)
         return True
 
     return False
@@ -448,6 +449,33 @@ if get_user_data():
         st.title('Generated Audio')
         SoundGenerator("piano/train/{}.mat".format(key), "piano/generate/{}_generated.mat".format(key))
         st.audio("piano/generate/{}_generated.wav".format(key))
+
+    # get data about guitar signal
+    Fs_guitar, sound_data_guitar = wavfile.read("piano/generate/{}_generated.wav".format(key))
+    duration = len(sound_data_guitar) / Fs_guitar
+    time_guitar = np.arange(1, duration, 1/Fs_guitar)
+
+    with thirteen:
+        st.title('Signal of generated guitar .wav file')
+        plt.plot(time_guitar, sound_data_guitar)
+        plt.xlabel('Time [s]')
+        plt.ylabel('Amplitude')
+        plt.title('{}.wav'.format(key))
+        st.pyplot()
+
+    with fourteen:
+        st.text('')
+        st.text('')
+        st.text('')
+        st.text('')
+        GeneratedBox = st.beta_expander(label="Generated audio")
+        with GeneratedBox:
+            """
+            This is the audio that was generated from the neural network.
+            """
+
+    
+
 
 
 # def model_trainer(path_dataset):

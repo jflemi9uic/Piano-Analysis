@@ -1,3 +1,4 @@
+from altair.vegalite.v4.schema.channels import Key
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import xlim
@@ -13,7 +14,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 class FeatureExtractor:
     
-    def __init__(self, sound_file_path: str, three, five, thirteen):
+    def __init__(self, sound_file_path: str, key, three, five, one, two):
         self.sound_file_path = sound_file_path  # this should be a .wav file
 
         # Read sound file
@@ -88,16 +89,24 @@ class FeatureExtractor:
             st.pyplot()
 
 
-        with thirteen:
+        with one:
             st.title("Signal of original graph")
             plt.plot(time, sound_data)
             plt.xlabel('Time [s]')
             plt.ylabel('Amplitude')
-            plt.title('A4.wav.wav')
+            plt.title('{}.wav'.format(key))
             st.pyplot()
-            
 
-
+        with two:
+            st.text('')
+            st.text('')
+            st.text('')
+            st.text('')
+            SignalBox = st.beta_expander(label='Inputted Signal')
+            with SignalBox:
+                """
+                Here is the signal from the orignal sound file. Notice how it starts off with large frequencies then damps down.
+                """
 
         # Find initial guess of a and b
         self.a = np.zeros(8)
