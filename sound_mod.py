@@ -26,18 +26,20 @@ st.set_page_config(layout="wide")
 st.markdown("<h1 style='text-align: center;'>Sound Modification App</h1>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>Made by James Fleming and Bradley Goedde</h1>", unsafe_allow_html=True)
 st.title('')
-st.header('Welcome to the Sound Modification App')
-st.text('In this app, the goal is to take your piano audio file as an input and using feature engineering transform it to a guitar sound!')
-st.text('Follow the steps below for how to use the app!')
-st.text('') 
-st.header('Steps to use Synthesizer')
-st.text('1. Upload your piano key audio file (ex: A4.wav). You can hear the audio file you uploaded by pressing the play button on the audio bar. ')
-st.text('2. Below, the steps that are used to complete the sound transformation are displayed.')
-st.text('3. Click on the "see explanation" box to the right of each step to see an explanation of how the step works!')
-st.text('4. Scroll to the bottom of the page to see the final guitar sound generated from your input piano key.')
-st.text('5. Press the play button on the audio bar to hear the generated guitar sound! Hopefully this app has given you a greater understanding of how feature engineering works!')
-st.text('')
-st.text('')
+st.title('')
+# st.title('')
+# st.header('Welcome to the Sound Modification App')
+# st.text('In this app, the goal is to take your piano audio file as an input and using feature engineering transform it to a guitar sound!')
+# st.text('Follow the steps below for how to use the app!')
+# st.text('') 
+# st.header('Steps to use Synthesizer')
+# st.text('1. Upload your piano key audio file (ex: A4.wav). You can hear the audio file you uploaded by pressing the play button on the audio bar. ')
+# st.text('2. Below, the steps that are used to complete the sound transformation are displayed.')
+# st.text('3. Click on the "see explanation" box to the right of each step to see an explanation of how the step works!')
+# st.text('4. Scroll to the bottom of the page to see the final guitar sound generated from your input piano key.')
+# st.text('5. Press the play button on the audio bar to hear the generated guitar sound! Hopefully this app has given you a greater understanding of how feature engineering works!')
+# st.text('')
+# st.text('')
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # there needs to be 6 rows
@@ -100,7 +102,7 @@ with six:
         The darker the color the larger the damping coefficient (the more negative).
         """
 
-with eight:
+with ten:
     st.text('')
     st.text('')
     st.text('')
@@ -112,7 +114,7 @@ with eight:
         Once the 4 features displayed in the table were collected from the original audio input using FFT and STFT above, they were passed through a neural network which transformed the features the predicted guitar features displayed in the table.
         """
 
-with ten:  
+with eight:  
     st.text('')
     st.text('')
     st.text('')
@@ -453,7 +455,7 @@ if get_user_data():
     # get data about guitar signal
     Fs_guitar, sound_data_guitar = wavfile.read("piano/generate/{}_generated.wav".format(key))
     duration = len(sound_data_guitar) / Fs_guitar
-    time_guitar = np.arange(1, duration, 1/Fs_guitar)
+    time_guitar = np.arange(0, duration, 1/Fs_guitar)
 
     with thirteen:
         st.title('Signal of generated guitar .wav file')
