@@ -9,13 +9,15 @@ from scipy.optimize import curve_fit
 import streamlit as st
 import os
 
+from streamlit.caching import _show_cached_st_function_warning
+
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 
 class FeatureExtractor:
     
-    def __init__(self, sound_file_path: str, key, three, five, one):
-        self.sound_file_path = sound_file_path  # this should be a .wav file
+    def __init__(self, sound_file_path: str, key, input_graph, FFT_graph, STFT_graph):
+        self.sound_file_path = "piano/train/" + key + ".wav" #sound_file_path  # this should be a .wav file
 
         # Read sound file
         Fs, sound_data = wavfile.read(self.sound_file_path)
@@ -51,8 +53,16 @@ class FeatureExtractor:
 
         x_limit = int(self.omega[7]+400)
 
-        with three: 
-        # Plot FFT
+        
+        with input_graph:
+            st.title("Inputted piano signal")
+            plt.plot(time, sound_data)
+            plt.xlabel('Time [s]')
+            plt.ylabel('Amplitude')
+            plt.title('{}.wav'.format(key))
+            st.pyplot()
+
+        with FFT_graph: 
             st.title('Fast Fourier Transform Plot')
             plt.title('Fast Fourier Transform')
             plt.ylabel('Magnitude')
@@ -62,39 +72,30 @@ class FeatureExtractor:
             plt.grid()
 #             plt.annotate('Dominant Frequency', xy=(525,265), xytext=(750, 320), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left')
-            plt.annotate('Dominant Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', arrowprops=dict(facecolor='black', shrink=0.1),
-            horizontalalignment='left', verticalalignment='top')
+            plt.annotate('Fundumental Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', 
+                         arrowprops=dict(facecolor='black', shrink=0.1), horizontalalignment='left', verticalalignment='top')
 #             plt.annotate('High Frequency', xy=(2250,30), xytext=(2300, 90), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
-            plt.annotate('High Frequencies', xy=(xmax,ymax), xytext=(2100, 0.2*ymax), weight='bold')
+            plt.annotate('Harmonic Frequencies', xy=(xmax,ymax), xytext=(2100, 0.2*ymax), weight='bold')
             st.pyplot()
 
         # short-time fourier transform
         f, t, s = stft(y, Fs, window='boxcar', nperseg=2048 * 2, noverlap=None, nfft=None, detrend=False, return_onesided=True, )
 
-        with five: 
+        with STFT_graph: 
             st.title('Short-time Fourier Transform Plot')
             f_plot = f[0:400]
             s_plot = np.log(np.abs(s[1:400, ]))
-            plt.pcolormesh(t, f_plot, s_plot, shading="auto")
+            plt.pcolormesh(t, f_plot, s_plot, shading='auto')
             plt.title('Short-time Fourier Transform Magnitude')
             plt.ylabel('Frequency [Hz]')
             plt.xlabel('Time [sec]')
 #             plt.annotate('Dominant Frequency', xy=(1.7,475), xytext=(1.9, 1100), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
-            plt.annotate('Dominant Frequency', xy=(1.5,xmax), xytext=(1.5, xmax+40), weight='bold')
+            plt.annotate('Fundumental Frequency', color='white', xy=(1.5,xmax), xytext=(1.5, xmax+40), weight='bold')
 #             plt.annotate('High Frequency', xy=(1.2,2350), xytext=(1.3, 3000), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
-            plt.annotate('High Frequencies', xy=(1.5,xmax), xytext=(1.3, xmax+2500), weight='bold')
-            st.pyplot()
-
-
-        with one:
-            st.title("Signal of original graph")
-            plt.plot(time, sound_data)
-            plt.xlabel('Time [s]')
-            plt.ylabel('Amplitude')
-            plt.title('{}.wav'.format(key))
+            plt.annotate('Harmonic Frequencies', color='white', xy=(1.5,xmax), xytext=(1.3, xmax+2500), weight='bold')
             st.pyplot()
 
         # Find initial guess of a and b
@@ -141,5 +142,5 @@ class FeatureExtractor:
     def save_features(self):
 
         mat_dic = {"a": self.a, "b": self.b, "phi": self.phi, "omega": self.omega}
-        save_feature_path = self.sound_file_path.name.replace('wav', 'mat')
+        save_feature_path = self.sound_file_path.replace('wav', 'mat')
         savemat(save_feature_path, mat_dic)
