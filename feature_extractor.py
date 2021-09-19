@@ -72,7 +72,7 @@ class FeatureExtractor:
             plt.grid()
 #             plt.annotate('Dominant Frequency', xy=(525,265), xytext=(750, 320), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left')
-            plt.annotate('Fundumental Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', 
+            plt.annotate('Fundamental Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', 
                          arrowprops=dict(facecolor='black', shrink=0.1), horizontalalignment='left', verticalalignment='top')
 #             plt.annotate('High Frequency', xy=(2250,30), xytext=(2300, 90), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
@@ -92,7 +92,7 @@ class FeatureExtractor:
             plt.xlabel('Time [sec]')
 #             plt.annotate('Dominant Frequency', xy=(1.7,475), xytext=(1.9, 1100), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
-            plt.annotate('Fundumental Frequency', color='white', xy=(1.5,xmax), xytext=(1.5, xmax+40), weight='bold')
+            plt.annotate('Fundamental Frequency', color='white', xy=(1.5,xmax), xytext=(1.5, xmax+40), weight='bold')
 #             plt.annotate('High Frequency', xy=(1.2,2350), xytext=(1.3, 3000), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
             plt.annotate('Harmonic Frequencies', color='white', xy=(1.5,xmax), xytext=(1.3, xmax+2500), weight='bold')
