@@ -14,7 +14,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 class FeatureExtractor:
     
-    def __init__(self, sound_file_path: str, key, three, five, one, two):
+    def __init__(self, sound_file_path: str, key, three, five, one):
         self.sound_file_path = sound_file_path  # this should be a .wav file
 
         # Read sound file
@@ -96,17 +96,6 @@ class FeatureExtractor:
             plt.ylabel('Amplitude')
             plt.title('{}.wav'.format(key))
             st.pyplot()
-
-        with two:
-            st.text('')
-            st.text('')
-            st.text('')
-            st.text('')
-            SignalBox = st.beta_expander(label='Inputted Signal')
-            with SignalBox:
-                """
-                Here is the signal from the orignal sound file. Notice how it starts off with large frequencies then damps down.
-                """
 
         # Find initial guess of a and b
         self.a = np.zeros(8)

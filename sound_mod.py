@@ -139,6 +139,17 @@ with twelve:
         then using the neural network to generate the predicted guitar features, these features are used to finally produce the generated guitar audio.
         """
 
+with two:
+    st.text('')
+    st.text('')
+    st.text('')
+    st.text('')
+    SignalBox = st.beta_expander(label='Inputted Signal')
+    with SignalBox:
+        """
+        Here is the signal from the orignal sound file. Notice how it starts off with large frequencies then damps down.
+        """
+
 
 class MyDataset(Dataset):
 
