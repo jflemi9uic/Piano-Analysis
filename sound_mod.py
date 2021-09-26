@@ -12,7 +12,7 @@ import streamlit as st
 import scipy.integrate
 from scipy.io import wavfile, loadmat
 import math
-from scipy.io.wavfile import write
+from scipy.io.wavfile import read, write
 from PIL import Image
 
 from config import path_dataset, path_model
@@ -24,46 +24,69 @@ is_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if is_cuda else 'cpu')
 
 st.set_page_config(layout="wide")
-st.markdown("<h1 style='text-align: center;'>Sound Modification App</h1>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center;'>Made by James Fleming and Bradley Goedde</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='font-size: 40px; text-align: center;'>Sound Modification Mini App</h1>", unsafe_allow_html=True)
+st.markdown("<h2 style='font-size: 30px; text-align: center;'><i>Made by James Fleming and Bradley Goedde</i></h1>", unsafe_allow_html=True)
+st.markdown("<h2 style='font-size: 30px; text-align: center;'><i>With help from Hengyang Li, Xiaoyu Xie and Sourav Saha</i></h1>", unsafe_allow_html=True)
+st.header('')
+
+st.markdown("<h2 style='margin: 0 150px'>In this app, the goal is to take your piano audio file as an input and using feature engineering transform it to a guitar sound!</h1>", unsafe_allow_html=True)
+st.header('')
+
+st.markdown("<h2 style='margin: 0 150px'>Steps to use Synthesizer:</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin: 0 150px'>1. Click on the links and download the note that you want to analyze.</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin: 0 150px'>2. Upload the download file (note: make sure that it is a .wav file).</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin: 0 150px'>3. Follow the steps below and see how the file that you uploaded is interacted with.</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin: 0 150px'>4. Click the 'See explanation' box to the right of each step for an explanation on how the step works.</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin: 0 150px'>5. Scroll to the bottom of the page to see the guitar note that you generated from your input.</h1>", unsafe_allow_html=True)
 st.title('')
-st.title('')
-# st.title('')
-# st.header('Welcome to the Sound Modification App')
-# st.text('In this app, the goal is to take your piano audio file as an input and using feature engineering transform it to a guitar sound!')
-# st.text('Follow the steps below for how to use the app!')
+
+
+
+
 # st.text('') 
 # st.header('Steps to use Synthesizer')
-# st.text('1. Upload your piano key audio file (ex: A4.wav). You can hear the audio file you uploaded by pressing the play button on the audio bar. ')
-# st.text('2. Below, the steps that are used to complete the sound transformation are displayed.')
-# st.text('3. Click on the "see explanation" box to the right of each step to see an explanation of how the step works!')
-# st.text('4. Scroll to the bottom of the page to see the final guitar sound generated from your input piano key.')
-# st.text('5. Press the play button on the audio bar to hear the generated guitar sound! Hopefully this app has given you a greater understanding of how feature engineering works!')
+# st.text('1. Download sound files from google drive')
+# st.text('2. Upload your piano key audio file (ex: A4.wav). You can hear the audio file you uploaded by pressing the play button on the audio bar. ')
+# st.text('3. Below, the steps that are used to complete the sound transformation are displayed.')
+# st.text('4. Click on the "see explanation" box to the right of each step to see an explanation of how the step works!')
+# st.text('5. Scroll to the bottom of the page to see the final guitar sound generated from your input piano key.')
+# st.text('6. Press the play button on the audio bar to hear the generated guitar sound! Hopefully this app has given you a greater understanding of how feature engineering works!')
 # st.text('')
 # st.text('')
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
-first_left, input_file, first_right                = st.beta_columns([3, 7, 3])
-a, input_graph, input_graph_desc, a2               = st.beta_columns([1, 7, 4, 1])
-third_left, input_play_button, third_right         = st.beta_columns([3, 7, 3])
-b, FFT_graph, FFT_desc, b2                         = st.beta_columns([1, 7, 4, 1])
-c, STFT_graph, STFT_desc, c2                       = st.beta_columns([1, 7, 4, 1])
-d, feat_graph, feat_graph_desc, d2                 = st.beta_columns([1, 8, 3, 1])
-e, feat_table, feat_table_desc, e2                 = st.beta_columns([1, 7, 4, 1])
-f, guitar_gen_graph, gen_graph_desc, f2            = st.beta_columns([1, 7, 4, 1])
-g, guitar_gen_audio, gen_audio_desc, g2            = st.beta_columns([1, 7, 4, 1])
-h, TTLS_title, TTLS_other, h2                      = st.beta_columns([1, 7, 4, 1])
-TTLS_padding_left, TTLS_image, TTLS_padding_right  = st.beta_columns([3, 7, 3])
-TTLS_real_piano, TTLS_real_guitar, TTLS_gen_guitar = st.beta_columns([1, 1, 1])
+a, input_file, a2                                    = st.beta_columns([3, 5, 3]) # done 
+b, input_graph, input_graph_desc, b2                 = st.beta_columns([1, 7, 4, 1]) 
+c, input_audio, c2                                   = st.beta_columns([3, 7, 3]) # done 
+d, FFT_graph, FFT_desc, d2                           = st.beta_columns([1, 7, 4, 1]) # done 
+e, STFT_graph, STFT_desc, e2                         = st.beta_columns([1, 7, 4, 1]) # done 
+f, feat_table, table_desc, f2                        = st.beta_columns([1, 7, 4, 1]) # done  
+g, feat_plot, plot_desc, g2                          = st.beta_columns([1, 7, 4, 1]) # done 
+h, gen_graph, gen_graph_desc, h2                     = st.beta_columns([1, 7, 4, 1]) 
+i, gen_audio, i2                                     = st.beta_columns([3, 7, 3]) # done 
+j, TTLS_title, TTLS_other, j2                        = st.beta_columns([1, 7, 4, 1]) # done 
+TTLS_padding_left, TTLS_image, TTLS_padding_right    = st.beta_columns([3, 7, 3]) # done 
+TTLS_real_piano, TTLS_real_guitar, TTLS_gen_guitar   = st.beta_columns([1, 1, 1]) # done 
 
 # Grabbing sound file data
-def get_user_data() -> bool:
+def get_user_data():
     with input_file: 
+        str_1  = "[A4](https://drive.google.com/file/d/1AHS4H8Z6Mt4IOBNk08o11gJGr8xyCrdJ/view?usp=sharing)"
+        str_2  = "[A5](https://drive.google.com/file/d/1T_pf0d2qmWho3d4W4N9tiFUp1N3Lz6F1/view?usp=sharing)"
+        str_3  = "[B5](https://drive.google.com/file/d/12P6-j4OqklHg4EI4S3Jjs_bRIEpAEfKY/view?usp=sharing)"
+        str_4  = "[C5](https://drive.google.com/file/d/1g4iVUT5bT4B2oCUriqFTDeIrhyIxZ6CX/view?usp=sharing)"
+        str_5  = "[C6](https://drive.google.com/file/d/1bH06LnBalDLbWOf3DngQ_ULxGt5tFyfV/view?usp=sharing)"
+        str_6  = "[D5](https://drive.google.com/file/d/1dF332ddr41YT5zuOPWA0DABdZoE0H5lN/view?usp=sharing)"
+        str_7  = "[E5](https://drive.google.com/file/d/1nl8Tl52Aj2zviyFL-PFLPGC9g4yhUn6E/view?usp=sharing)"
+        str_8  = "[G5](https://drive.google.com/file/d/1qj6ZC5GbebSdC2qepUG7lS6f1iB90m0y/view?usp=sharing)"
+
+        st.markdown('#### Download files from here: {} , {} , {} , {} , {} , {} , {} , {}'.format(str_1, str_2, str_3, str_4, str_5, str_6, str_7, str_8))
+
         uploaded_file = st.file_uploader('Choose a sound file', accept_multiple_files=False)
 
     if uploaded_file:
         global key
-        with input_play_button: 
+        with input_audio: 
             st.text('')
             st.text('')
             st.text('')
@@ -73,8 +96,7 @@ def get_user_data() -> bool:
         file = uploaded_file.name
         key = file.replace('.wav', '')
         
-        FeatureExtractor(uploaded_file, key, input_graph, FFT_graph, STFT_graph)
-
+        FeatureExtractor(uploaded_file, FFT_graph, STFT_graph, input_graph)
         return True
 
     return False
@@ -247,6 +269,7 @@ class Configer:
 
 
 def guitar_feature_generator(path_dataset, key_name, plot: bool = True):
+
     """Generate predicted guitar features from piano features
 
     Args:
@@ -255,9 +278,10 @@ def guitar_feature_generator(path_dataset, key_name, plot: bool = True):
 
     Returns:
         gen_guitar_feats: [List] contains predicted guitar features in a dict,
-                            note that this part can be used to generate many guitar features,
-                            so we use a list to store the guitar features.
+                          note that this part can be used to generate many guitar features,
+                          so we use a list to store the guitar features.
     """
+
     config = Configer()
     net = SimpleNet(config.p_length, config.g_length)
     net.to(device)
@@ -350,124 +374,102 @@ def guitar_feature_generator(path_dataset, key_name, plot: bool = True):
 
             return d
 
+# OUTPUT TO STEAMLIT
 
 if get_user_data():
+    # neural network prediction of guiter features
+    gen_guitar_feats = guitar_feature_generator(path_dataset, key)
+
+    # ----- INPUT SIGNAL ------ # 
 
     with input_graph_desc:
         st.text('')
         st.text('')
         st.text('')
         st.text('')
-        SignalBox = st.beta_expander(label='Inputted Piano note')
-        with SignalBox:
-            """
-            <fill this in>
-            """
+        input_box = st.beta_expander(label="See explanation")
+        with input_box:
+            st.markdown("<p style='font-size: 17px'>The sound file that you just inputted can be graphed as a signal. This is the signal that we use to extract all of the data from. This will then become features for the neural network.</p>", unsafe_allow_html=True)
+
+
+    # ----- FOURIER TRANSFORM ----- # 
 
     with FFT_desc:
         st.text('')
         st.text('')
         st.text('')
         st.text('')
-        FFTbox = st.beta_expander(label='Fast Fourier Transform note')
+        FFTbox = st.beta_expander(label='See explanation')
         with FFTbox: 
-            """
-            Here is the Fast Fourier Transform graph. By using sin waves, FFT makes it easier to see the dominant frequency and its harmonics. 
-            These frequenices are collected and will be used as the "frequency feature" and the amplitudes for these frequencies are collected and will be used as the "a feature".
-            Then using a simple wave equation, the phase angle can be collected and used as the "phi feature".
-            These important features will be used later on to process the signal using the neural network.
-            """
+            st.markdown("<p style='font-size: 17px'>Here is the Fast Fourier Transform graph. By using sin waves, FFT makes it easier to see the dominant frequency and its harmonics. These frequenices are collected and will be used as the 'frequency feature (omega)' and the amplitudes for these frequencies are collected and will be used as the 'amplitude feature (a)'.  Then using a simple wave equation, the phase angle can be collected and used as the 'phase angle feature (phi)'. These important features will be used later on to process the signal using the neural network.</p>", unsafe_allow_html=True)
+
+
+    # ----- SHORT TIME FOURIER TRANSFORM ----- #
 
     with STFT_desc:    
         st.text('')
         st.text('')
         st.text('')
         st.text('')
-        STFTbox = st.beta_expander(label='Short Time Fourier Transform note')
+        STFTbox = st.beta_expander(label='See explanation')
         with STFTbox:
-            """
-            Similarly to the Fast Fourier Transform above, the Short Time Fourier Transform graph here uses sin waves to gather important information from the signal.
-            Using a heat map and time on the x-axis, we can see how the damping coefficient changes with frequency. 
-            The darker the color the larger the damping coefficient (the more negative).
-            """
+            st.markdown("<p style='font-size: 17px'>Similar to the Fast Fourier Transform above, the Short Time Fourier Transform graph here uses sin waves to gather important information from the signal. Using a heat map and time on the x-axis, we can see how the damping coefficient changes with frequency. The darker the color the larger the damping coefficient (the more negative). This will be used as the 'b feature' in the neural network.</p>", unsafe_allow_html=True)
 
-    gen_guitar_feats = guitar_feature_generator(path_dataset, key)
-    
-    with feat_graph:
-        st.title('Features comparison')
-        st.pyplot()
 
-    with feat_graph_desc:  
-        st.text('')
-        st.text('')
-        st.text('')
-        st.text('')  
-        FPlot = st.beta_expander(label='Features plot note')
-        with FPlot: 
-            """
-            Here we have a plot that compares the generated guitar features with the real sound featuers. 
-            The predicted guitar features are compared with the real piano features and the real guitar features. 
-            From this overlay, it is clear that the neural network has been trained well, and the features generated are very close to what they should be!
-            """
+    # ----- GENERATED FEATURES TABLE ----- #
 
     with feat_table: 
-        st.title('Generated guitar features')
+        st.title('Features')
         del gen_guitar_feats['Key']
         savemat("piano/generate/{}_generated.mat".format(key), gen_guitar_feats)
         st.header("Key: {}".format(key))
-
-        gen_guitar_feats["Frequency"] = gen_guitar_feats["omega"]
-        del gen_guitar_feats["omega"]
-
-        gen_guitar_feats["Phase angle"] = gen_guitar_feats["phi"]
-        del gen_guitar_feats["phi"]
-
-        gen_guitar_feats["Amplitude"] = gen_guitar_feats["a"]
-        del gen_guitar_feats["a"]
-
-        gen_guitar_feats["Damping Coefficient"] = gen_guitar_feats["b"]
-        del gen_guitar_feats["b"]
-    
         st.table(gen_guitar_feats)
 
-    with feat_table_desc:
+    with table_desc:
         st.text('')
         st.text('')
         st.text('')
         st.text('')    
-        FTable = st.beta_expander(label='Features table note')
+        FTable = st.beta_expander(label='See explanation')
         with FTable: 
-            """
-            Here are the resulting guitar features!
-            Once the 4 features displayed in the table were collected from the original audio input using FFT and STFT above, they were passed through a neural network which transformed the features the predicted guitar features displayed in the table.
-            """
+            st.markdown("<p style='font-size: 17px'>Here are the generated guitar features! Once the 4 features were collected, they were passed into a neural network which transformed the inputted features into the predicted guitar features displayed in the table. There are 8 rows. 1 dominant frequency and 7 harmonics.</p>", unsafe_allow_html=True)
 
 
-    with guitar_gen_audio:
-        st.title('Generated guitar audio')
-        SoundGenerator("piano/train/{}.mat".format(key), "piano/generate/{}_generated.mat".format(key))
-        st.audio("piano/generate/{}_generated.wav".format(key))
+    # ----- FEATURES COMPARISON PLOT ----- #
 
-    with gen_audio_desc: 
+    with feat_plot:
+        st.title('Plot of Features')
+        st.pyplot()
+
+    with plot_desc:  
         st.text('')
         st.text('')
         st.text('')
-        st.text('')   
-        GAudio = st.beta_expander(label='Generated guitar audio note')
-        with GAudio: 
-            """
-            Yay! We've generated a guitar sound! After uploading your piano key, going through feature extraction, 
-            then using the neural network to generate the predicted guitar features, these features are used to finally produce the generated guitar audio.
-            """
+        st.text('')  
+        FPlot = st.beta_expander(label='See explanation')
+        with FPlot: 
+            st.markdown("<p style='font-size: 17px'> Here we have a plot that compares the generated guitar features with the real sound featuers. From this overlay, it is clear that the neural network has been trained well, and the features generated are very close to what they should be!</p>", unsafe_allow_html=True)
 
-    # get data about guitar signal
-    Fs_guitar, sound_data_guitar = wavfile.read("piano/generate/{}_generated.wav".format(key))
-    duration = len(sound_data_guitar) / Fs_guitar
-    time_guitar = np.arange(0, duration, 1/Fs_guitar)
 
-    with guitar_gen_graph:
+    # ----- GENERATED SIGNAL GRAPH ----- #
+
+    with gen_graph:
         st.title('Generated guitar signal')
-        plt.plot(time_guitar, sound_data_guitar)
+
+        # not correct, dont show
+        # Fs, sound_data = wavfile.read("piano/train/{}.wav".format(key))
+        # duration = len(sound_data) / Fs
+        # time = np.arange(0, duration, 1/Fs)
+
+        # generated data
+        Fs_guitar, sound_data_guitar = wavfile.read("piano/generate/{}_generated.wav".format(key))
+        duration_guitar = len(sound_data_guitar) / Fs_guitar
+        time_guitar = np.arange(0, duration_guitar, 1/Fs_guitar)
+
+        # plt.plot(time, sound_data)
+        plt.plot(time_guitar, sound_data_guitar, color="teal")
+
+        plt.legend()
         plt.xlabel('Time [s]')
         plt.ylabel('Amplitude')
         plt.title('{}.wav'.format(key))
@@ -477,28 +479,38 @@ if get_user_data():
         st.text('')
         st.text('')
         st.text('')
-        st.text('')  
-        FPlot = st.beta_expander(label='Generated guitar note')
-        with FPlot: 
-            """
-            <fill this in>
-            """
+        st.text('')   
+        gen_graph_box = st.beta_expander(label='See explanation')
+        with gen_graph_box: 
+            st.markdown("<p style='font-size: 17px'>The features from the table above were able to give us enough information to go from data to a sound. By using the 4 features instead of every single data point from the inputted piano signal, the program is drastically faster. Go ahead and play what you generated!</p>", unsafe_allow_html=True)
     
+        
+    # ----- GENERATED AUDIO ----- #
+        
+    with gen_audio:
+        SoundGenerator("piano/train/{}.mat".format(key), "piano/generate/{}_generated.mat".format(key))
+        st.audio("piano/generate/{}_generated.wav".format(key))
+
+    # ---------- TWINKLE TWINKLE LITTLE START DEMO ---------- #
     with TTLS_title:
         st.title('')
         st.title("Twinkle Twinkle Little Neural Network")
+
 
     with TTLS_image:
         image = Image.open("MDS-process.png")
         st.image(image)
 
+
     with TTLS_real_piano:
         st.title("Real piano")
         st.audio("TTLS/TTLS-real_piano.wav")
 
+
     with TTLS_real_guitar:
         st.title("Real guitar")
         st.audio("TTLS/TTLS-real_guitar.wav")
+
 
     with TTLS_gen_guitar:
         st.title("Generated guitar")
