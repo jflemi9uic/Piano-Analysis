@@ -1,4 +1,3 @@
-from altair.vegalite.v4.schema.channels import Key
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import xlim
@@ -9,15 +8,13 @@ from scipy.optimize import curve_fit
 import streamlit as st
 import os
 
-from streamlit.caching import _show_cached_st_function_warning
-
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 
 class FeatureExtractor:
     
-    def __init__(self, sound_file_path: str, key, input_graph, FFT_graph, STFT_graph):
-        self.sound_file_path = "piano/train/" + key + ".wav" #sound_file_path  # this should be a .wav file
+    def __init__(self, sound_file_path, FFT_graph, STFT_graph, input_graph):
+        self.sound_file_path = sound_file_path  # this should be a .wav file
 
         # Read sound file
         Fs, sound_data = wavfile.read(self.sound_file_path)
@@ -53,40 +50,42 @@ class FeatureExtractor:
 
         x_limit = int(self.omega[7]+400)
 
-        
         with input_graph:
-            st.title("Inputted piano signal")
-            plt.plot(time, sound_data)
-            plt.xlabel('Time [s]')
+            st.title("Inputted signal graph")
             plt.ylabel('Amplitude')
-            plt.title('{}.wav'.format(key))
+            plt.xlabel('Time [seconds]')
+            plt.plot(time, sound_data, color="teal")
             st.pyplot()
 
         with FFT_graph: 
+        # Plot FFT
             st.title('Fast Fourier Transform Plot')
             plt.title('Fast Fourier Transform')
             plt.ylabel('Magnitude')
             plt.xlabel('Frequency [Hz]')
-            plt.plot(f, X)
+            plt.plot(f, X, color="teal")
             xlim(0, x_limit)  # Define x axis limitation in the figure
             plt.grid()
 #             plt.annotate('Dominant Frequency', xy=(525,265), xytext=(750, 320), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left')
-            plt.annotate('Fundamental Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', 
-                         arrowprops=dict(facecolor='black', shrink=0.1), horizontalalignment='left', verticalalignment='top')
+            plt.annotate('Fundamental Frequency', xy=(xmax,ymax), xytext=(xmax+400, ymax+15), weight='bold', arrowprops=dict(facecolor='black', shrink=0.1),
+            horizontalalignment='left', verticalalignment='top')
 #             plt.annotate('High Frequency', xy=(2250,30), xytext=(2300, 90), arrowprops=dict(facecolor='black'),
 #             horizontalalignment='left', verticalalignment='top')
             plt.annotate('Harmonic Frequencies', xy=(xmax,ymax), xytext=(2100, 0.2*ymax), weight='bold')
             st.pyplot()
 
+
+
         # short-time fourier transform
         f, t, s = stft(y, Fs, window='boxcar', nperseg=2048 * 2, noverlap=None, nfft=None, detrend=False, return_onesided=True, )
+
 
         with STFT_graph: 
             st.title('Short-time Fourier Transform Plot')
             f_plot = f[0:400]
             s_plot = np.log(np.abs(s[1:400, ]))
-            plt.pcolormesh(t, f_plot, s_plot, shading='auto')
+            plt.pcolormesh(t, f_plot, s_plot, shading="auto")
             plt.title('Short-time Fourier Transform Magnitude')
             plt.ylabel('Frequency [Hz]')
             plt.xlabel('Time [sec]')
@@ -124,7 +123,6 @@ class FeatureExtractor:
     # Define fit function: optimize phase angles
     @staticmethod
     def func1(x, a, b):
-
         return a * np.exp(b * x)
 
     @staticmethod
@@ -136,11 +134,9 @@ class FeatureExtractor:
         return f
 
     def func3(self, t, c0, c1, c2, c3, c4, c5, c6, c7):
-
         return self.func2(t, c0, c1, c2, c3, c4, c5, c6, c7, self.a, self.b, self.omega)
 
     def save_features(self):
-
         mat_dic = {"a": self.a, "b": self.b, "phi": self.phi, "omega": self.omega}
-        save_feature_path = self.sound_file_path.replace('wav', 'mat')
+        save_feature_path = self.sound_file_path.name.replace('wav', 'mat')
         savemat(save_feature_path, mat_dic)
