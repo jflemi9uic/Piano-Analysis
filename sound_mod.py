@@ -71,14 +71,15 @@ TTLS_real_piano, TTLS_real_guitar, TTLS_gen_guitar   = st.beta_columns([1, 1, 1]
 # Grabbing sound file data
 def get_user_data():
     with input_file: 
-        str_1  = "[A4](https://drive.google.com/file/d/1AHS4H8Z6Mt4IOBNk08o11gJGr8xyCrdJ/view?usp=sharing)"
-        str_2  = "[A5](https://drive.google.com/file/d/1T_pf0d2qmWho3d4W4N9tiFUp1N3Lz6F1/view?usp=sharing)"
-        str_3  = "[B5](https://drive.google.com/file/d/12P6-j4OqklHg4EI4S3Jjs_bRIEpAEfKY/view?usp=sharing)"
-        str_4  = "[C5](https://drive.google.com/file/d/1g4iVUT5bT4B2oCUriqFTDeIrhyIxZ6CX/view?usp=sharing)"
-        str_5  = "[C6](https://drive.google.com/file/d/1bH06LnBalDLbWOf3DngQ_ULxGt5tFyfV/view?usp=sharing)"
-        str_6  = "[D5](https://drive.google.com/file/d/1dF332ddr41YT5zuOPWA0DABdZoE0H5lN/view?usp=sharing)"
-        str_7  = "[E5](https://drive.google.com/file/d/1nl8Tl52Aj2zviyFL-PFLPGC9g4yhUn6E/view?usp=sharing)"
-        str_8  = "[G5](https://drive.google.com/file/d/1qj6ZC5GbebSdC2qepUG7lS6f1iB90m0y/view?usp=sharing)"
+        str_1  = "[A4](https://drive.google.com/file/d/1dfm06v8uJ86GeUwtHTGzzcUMPEXwGDSF/view?usp=sharing)"
+        str_2  = "[A5](https://drive.google.com/file/d/1_SxDGUMfiBxgAsHymChzxxCAkexaBHj0/view?usp=sharing)"
+        str_3  = "[B5](https://drive.google.com/file/d/1mye_Ai80KsHyx_Axqwxt7VSV_x0nTkYV/view?usp=sharing)"
+        str_4  = "[C5](https://drive.google.com/file/d/1f7xco8faINIdq21RTdtN-FbbWWuQ52d6/view?usp=sharing)"
+        str_5  = "[C6](https://drive.google.com/file/d/1Ut8mrtvnVrtcKn_7DMCiy5NCFd-8Jye8/view?usp=sharing)"
+        str_6  = "[D5](https://drive.google.com/file/d/1Q5LsbbmY7nk5ONVM1hs8lO31aPvbDlY6/view?usp=sharing)"
+        str_7  = "[E5](https://drive.google.com/file/d/1nRiZMA_fTgZ_MEy9c-XR8xGdi0a1Ce0B/view?usp=sharing)"
+        str_8  = "[G5](https://drive.google.com/file/d/17GLUsIuLptJW_MM66NJF3KhhRASUjSkb/view?usp=sharing)"
+        
 
         st.markdown('#### Download files from here: {} , {} , {} , {} , {} , {} , {} , {}'.format(str_1, str_2, str_3, str_4, str_5, str_6, str_7, str_8))
 
